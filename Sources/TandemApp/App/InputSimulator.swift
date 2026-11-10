@@ -310,7 +310,7 @@ enum InputSimulator {
             var view: NSView? = target
             while let candidate = view, candidate.registeredDraggedTypes.isEmpty { view = candidate.superview }
             guard let destination = view else { return }
-            let pasteboard = NSPasteboard(name: NSPasteboard.Name("com.mikerosoft.tandem.simulated-drop"))
+            let pasteboard = NSPasteboard(name: NSPasteboard.Name("com.itbenko.tandem.simulated-drop"))
             pasteboard.clearContents()
             pasteboard.setString(payload, forType: .string)
             let end = windowPoint(to)
@@ -334,7 +334,7 @@ enum InputSimulator {
             var view: NSView? = target
             while let candidate = view, candidate.registeredDraggedTypes.isEmpty { view = candidate.superview }
             guard let destination = view else { return }
-            let pasteboard = NSPasteboard(name: NSPasteboard.Name("com.mikerosoft.tandem.simulated-drop"))
+            let pasteboard = NSPasteboard(name: NSPasteboard.Name("com.itbenko.tandem.simulated-drop"))
             pasteboard.clearContents()
             if case .drop(let payload) = gesture.kind {
                 pasteboard.setString(payload, forType: .string)

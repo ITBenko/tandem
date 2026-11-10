@@ -726,7 +726,7 @@ public final class EditHistoryLog: @unchecked Sendable {
 /// queue. Every session has one, so the history carries on from the app
 /// to the CLI and back, and across restarts.
 public final class HistoryRecorder: @unchecked Sendable {
-    private let queue = DispatchQueue(label: "com.mikerosoft.tandem.history")
+    private let queue = DispatchQueue(label: "com.itbenko.tandem.history")
     private let coordinator: ProjectCoordinator
     public let log: EditHistoryLog?
     private var token: UUID?

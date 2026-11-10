@@ -574,7 +574,7 @@ final class ExportPipeline: @unchecked Sendable {
             let group = DispatchGroup()
             group.enter()
             group.enter()
-            io.value.video.requestMediaDataWhenReady(on: DispatchQueue(label: "com.mikerosoft.tandem.export.video", qos: DispatchQoS(qosClass: qos, relativePriority: 0))) { [weak self] in
+            io.value.video.requestMediaDataWhenReady(on: DispatchQueue(label: "com.itbenko.tandem.export.video", qos: DispatchQoS(qosClass: qos, relativePriority: 0))) { [weak self] in
                 let (writer, input, _) = io.value
                 while input.isReadyForMoreMediaData {
                     guard let sample = encoder.nextEncoded(), !(self?.isCancelled ?? true), writer.status == .writing else {
@@ -587,7 +587,7 @@ final class ExportPipeline: @unchecked Sendable {
                     self?.report(base + (1 - base) * 0.99 * t / max(durationSeconds, 0.001))
                 }
             }
-            io.value.audio.requestMediaDataWhenReady(on: DispatchQueue(label: "com.mikerosoft.tandem.export.audio", qos: DispatchQoS(qosClass: qos, relativePriority: 0))) { [weak self] in
+            io.value.audio.requestMediaDataWhenReady(on: DispatchQueue(label: "com.itbenko.tandem.export.audio", qos: DispatchQoS(qosClass: qos, relativePriority: 0))) { [weak self] in
                 let (writer, _, input) = io.value
                 while input.isReadyForMoreMediaData {
                     guard !(self?.isCancelled ?? true), writer.status == .writing, let sample = master.next() else {
@@ -668,7 +668,7 @@ final class ExportPipeline: @unchecked Sendable {
         let io = Unchecked((writer: writer, input: input))
         let durationSeconds = range.duration.seconds
         await withCheckedContinuation { (done: CheckedContinuation<Void, Never>) in
-            io.value.input.requestMediaDataWhenReady(on: DispatchQueue(label: "com.mikerosoft.tandem.export.sound", qos: DispatchQoS(qosClass: qos, relativePriority: 0))) { [weak self] in
+            io.value.input.requestMediaDataWhenReady(on: DispatchQueue(label: "com.itbenko.tandem.export.sound", qos: DispatchQoS(qosClass: qos, relativePriority: 0))) { [weak self] in
                 let (writer, input) = io.value
                 while input.isReadyForMoreMediaData {
                     guard !(self?.isCancelled ?? true), writer.status == .writing, let sample = master.next() else {

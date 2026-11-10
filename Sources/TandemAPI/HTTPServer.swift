@@ -20,7 +20,7 @@ public final class TandemHTTPServer: @unchecked Sendable {
     public let token: String
     public private(set) var port: Int = 0
 
-    private let queue = DispatchQueue(label: "com.mikerosoft.tandem.http")
+    private let queue = DispatchQueue(label: "com.itbenko.tandem.http")
     private var listener: NWListener?
     private var connections: [ObjectIdentifier: HTTPConnection] = [:]
     private let lock = NSLock()

@@ -53,7 +53,7 @@ class TandemCompositor: NSObject, AVVideoCompositing {
     private var generation = 0
 
     override init() {
-        queue = DispatchQueue(label: "com.mikerosoft.tandem.compositor", qos: Self.renderQoS, attributes: .concurrent)
+        queue = DispatchQueue(label: "com.itbenko.tandem.compositor", qos: Self.renderQoS, attributes: .concurrent)
         super.init()
     }
 

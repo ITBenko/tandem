@@ -9,13 +9,13 @@ import Foundation
 /// app keeps the recent list in memory, so after writing these the command
 /// posts `renamedNotification` and a running app reloads its list.
 public enum ProjectPlaces {
-    public static let appDomain = "com.mikerosoft.tandem"
+    public static let appDomain = "com.itbenko.tandem"
     public static let recentKey = "recentProjects"
     public static let timelinesKey = "projectTimelines"
     public static let windowFramesKey = "projectWindowFrames"
     /// Posted (distributed) after a rename outside the app. The object is
     /// the defaults domain written, so an app on a test suite ignores it.
-    public static let renamedNotification = Notification.Name("com.mikerosoft.tandem.projectRenamed")
+    public static let renamedNotification = Notification.Name("com.itbenko.tandem.projectRenamed")
 
     /// The app's defaults: its own domain, or `TANDEM_DEFAULTS_SUITE` (tests
     /// and isolated app builds use one, and so must the commands they run).

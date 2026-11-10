@@ -24,6 +24,12 @@ final class CrashReportsTests: XCTestCase {
         XCTAssertFalse(CrashReports.shouldReport(bundleURL: installed, environment: ["CI": "true"]))
     }
 
+    func testOffWithoutABuiltInDSN() {
+        XCTAssertNil(CrashReports.dsn(info: [:]))
+        XCTAssertNil(CrashReports.dsn(info: ["TandemSentryDSN": "  "]))
+        XCTAssertEqual(CrashReports.dsn(info: ["TandemSentryDSN": "https://key@example.ingest.sentry.io/1"]), "https://key@example.ingest.sentry.io/1")
+    }
+
     func testReleaseNameCarriesTheCommit() {
         XCTAssertEqual(
             CrashReports.releaseName(info: ["CFBundleShortVersionString": "0.1.0", "CFBundleVersion": "1", "TandemCommit": "abc1234"]),

@@ -917,7 +917,7 @@ enum Signals {
 
     static func wait(for signals: [Int32], or trigger: Trigger? = nil) async {
         await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in
-            let queue = DispatchQueue(label: "com.mikerosoft.tandem.signals")
+            let queue = DispatchQueue(label: "com.itbenko.tandem.signals")
             let once = SignalOnce()
             // Ignore the default handling so the sources below see the signal.
             let sources = signals.map { number -> DispatchSourceSignal in

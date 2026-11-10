@@ -49,6 +49,10 @@ cp "$SCRIPT_DIR/Resources/Info.plist" "$APP_DIR/Contents/Info.plist"
 # The commit goes in the crash reports' release name (TandemCrashReports).
 COMMIT="$(git -C "$SCRIPT_DIR" rev-parse --short HEAD 2>/dev/null || echo unknown)"
 /usr/libexec/PlistBuddy -c "Add :TandemCommit string $COMMIT" "$APP_DIR/Contents/Info.plist"
+# Crash reports are off unless a Sentry DSN is given at build time.
+if [[ -n "${TANDEM_SENTRY_DSN:-}" ]]; then
+  /usr/libexec/PlistBuddy -c "Add :TandemSentryDSN string $TANDEM_SENTRY_DSN" "$APP_DIR/Contents/Info.plist"
+fi
 # SwiftPM resource bundles (keymaps, packs) sit next to the binaries.
 for bundle in "$BIN_DIR"/*.bundle; do
   [[ -e "$bundle" ]] || continue
@@ -89,7 +93,7 @@ if [[ "$SIGNING_IDENTITY" == "-" ]]; then
 fi
 
 codesign --force --timestamp=none --sign "$SIGNING_IDENTITY" \
-  --identifier "com.mikerosoft.tandem.cli" "$CLI_BIN" >/dev/null
+  --identifier "com.itbenko.tandem.cli" "$CLI_BIN" >/dev/null
 codesign --force --timestamp=none --sign "$SIGNING_IDENTITY" \
   ${SIGNING_REQUIREMENTS[@]+"${SIGNING_REQUIREMENTS[@]}"} "$APP_DIR" >/dev/null
 
@@ -100,15 +104,19 @@ rm -rf "$OLD_DIR"
 echo "Built $FINAL_DIR"
 
 # Sentry needs the debug symbols to show function names in crash reports.
-# Only the release app installed for Mike reports crashes (see
-# CrashReports.isInstalledApp), so only that build uploads them. This never
-# fails the build: no sentry-cli or token skips it, a failed upload warns.
+# Only the installed release app reports crashes, and only when built with
+# TANDEM_SENTRY_DSN (see CrashReports), so only that build uploads them, to
+# TANDEM_SENTRY_ORG / TANDEM_SENTRY_PROJECT. This never fails the build: no
+# DSN, org, sentry-cli or token skips it, a failed upload warns.
 upload_debug_symbols() {
   local cli token binary dsyms=()
   cli="$(command -v sentry-cli || true)"
   if [[ -z "$cli" && -x "$HOME/.local/bin/sentry-cli" ]]; then cli="$HOME/.local/bin/sentry-cli"; fi
   token="${SENTRY_AUTH_TOKEN:-}"
   if [[ -z "$token" && -r "$HOME/.config/sentry/token" ]]; then token="$(tr -d '[:space:]' < "$HOME/.config/sentry/token")"; fi
+  if [[ -z "${TANDEM_SENTRY_DSN:-}" || -z "${TANDEM_SENTRY_ORG:-}" ]]; then
+    return 0
+  fi
   if [[ -z "$cli" || -z "$token" ]]; then
     echo "Debug symbols not uploaded to Sentry (no sentry-cli or no token)."
     return 0
@@ -119,7 +127,7 @@ upload_debug_symbols() {
     if dsymutil "$BIN_DIR/$binary" -o "$BIN_DIR/$binary.dSYM"; then dsyms+=("$BIN_DIR/$binary.dSYM"); fi
   done
   if [[ ${#dsyms[@]} -eq 0 ]] \
-    || ! SENTRY_AUTH_TOKEN="$token" "$cli" debug-files upload --org mikec --project tandem "${dsyms[@]}"; then
+    || ! SENTRY_AUTH_TOKEN="$token" "$cli" debug-files upload --org "$TANDEM_SENTRY_ORG" --project "${TANDEM_SENTRY_PROJECT:-tandem}" "${dsyms[@]}"; then
     echo "WARNING: debug symbols weren't uploaded to Sentry; crash reports from this build won't show function names."
   fi
 }

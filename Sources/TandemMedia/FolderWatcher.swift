@@ -30,7 +30,7 @@ public final class FolderWatcher: @unchecked Sendable {
     public let settleTime: TimeInterval
 
     private let handler: @Sendable (Changes) -> Void
-    private let queue = DispatchQueue(label: "com.mikerosoft.tandem.media.watcher", qos: .utility)
+    private let queue = DispatchQueue(label: "com.itbenko.tandem.media.watcher", qos: .utility)
     private var stream: FSEventStreamRef?
     /// What each media file looked like when last reported (or at start).
     private var known: [String: FileStat] = [:]

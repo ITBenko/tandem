@@ -3,8 +3,12 @@ import Foundation
 import Sentry
 #endif
 
-/// Sends crashes from the installed Tandem to Sentry (project `tandem`), so
-/// Mike's watcher hears about a crash without anyone having to mention it.
+/// Sends crashes from the installed Tandem to Sentry, so I hear about a
+/// crash without anyone having to mention it.
+///
+/// Off unless a DSN is built in: build-app.sh copies `TANDEM_SENTRY_DSN`
+/// into the bundle's Info.plist as `TandemSentryDSN`. Without it (the
+/// default for this fork) nothing is ever sent anywhere.
 ///
 /// Only the release app in ~/Applications (or /Applications), and the
 /// `tandem` command inside it, ever report. Agents build and run Tandem all
@@ -17,15 +21,22 @@ import Sentry
 /// rather than to Sentry. No tracing, sessions or network breadcrumbs.
 public enum CrashReports {
     /// A Sentry DSN is a public client key; it ships inside the app anyway.
-    static let dsn = "https://ab6630bea33fc780aa4fdc232ab16747@o4508736647266304.ingest.us.sentry.io/4512336956555264"
+    /// Empty or missing means crash reporting is off.
+    static func dsn(info: [String: Any]) -> String? {
+        guard let value = (info["TandemSentryDSN"] as? String)?.trimmingCharacters(in: .whitespacesAndNewlines),
+              !value.isEmpty else { return nil }
+        return value
+    }
 
     /// `component` is `mac` for the app and `cli` for the `tandem` command,
     /// so the watcher can tell them apart.
     public static func start(component: String) {
         #if !DEBUG
         let bundle = Bundle.main
-        guard shouldReport(bundleURL: bundle.bundleURL, environment: ProcessInfo.processInfo.environment) else { return }
-        let release = releaseName(info: bundle.infoDictionary ?? [:])
+        let info = bundle.infoDictionary ?? [:]
+        guard let dsn = dsn(info: info),
+              shouldReport(bundleURL: bundle.bundleURL, environment: ProcessInfo.processInfo.environment) else { return }
+        let release = releaseName(info: info)
         SentrySDK.start { options in
             options.dsn = dsn
             options.environment = "production"
@@ -66,8 +77,8 @@ public enum CrashReports {
         return isInstalledApp(bundleURL: bundleURL, home: FileManager.default.homeDirectoryForCurrentUser)
     }
 
-    /// Where `setup_mac.sh` puts the app (or /Applications, if Mike moves
-    /// it there). The `tandem` command's main bundle is the app around it.
+    /// Where `setup_mac.sh` puts the app (or /Applications, if I move it
+    /// there). The `tandem` command's main bundle is the app around it.
     static func isInstalledApp(bundleURL: URL, home: URL) -> Bool {
         let path = bundleURL.standardizedFileURL.resolvingSymlinksInPath().path
         let installed = [
@@ -87,7 +98,7 @@ public enum CrashReports {
 
     static func cacheDirectory(component: String) -> URL {
         FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0]
-            .appendingPathComponent("com.mikerosoft.tandem/sentry-\(component)", isDirectory: true)
+            .appendingPathComponent("com.itbenko.tandem/sentry-\(component)", isDirectory: true)
     }
 
     #if !DEBUG

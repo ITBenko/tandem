@@ -7,7 +7,7 @@ import TandemRender
 
 extension NSPasteboard.PasteboardType {
     /// Media IDs dragged from the browser, comma separated.
-    static let tandemMedia = NSPasteboard.PasteboardType("com.mikerosoft.tandem.media")
+    static let tandemMedia = NSPasteboard.PasteboardType("com.itbenko.tandem.media")
 }
 
 /// The lanes: clips, transitions, the transcript and every edit gesture.

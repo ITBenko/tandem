@@ -23,18 +23,20 @@ this repo root. It requires macOS 15 or newer and Xcode 26 or newer with Swift 6
 - Keep private footage, API keys, generated apps, caches and build outputs
   out of git. Tests requiring footage, permission grants, live APIs or paid
   generation are opt-in through their existing `TANDEM_*` environment guards.
-- For a feature Mike uses from the keyboard or the mouse, add a scenario to
+- For a feature I use from the keyboard or the mouse, add a scenario to
   `tests/TandemAppTests/EditorBehaviourTests.swift`. `EditorHarness` opens a
-  real editor window offscreen and drives it the way he does (keys through
+  real editor window offscreen and drives it the way I do (keys through
   the keymap, clicks, drags and library drops), so a feature that passes its
   unit tests but no longer works from the UI fails there.
 - A few frame-timing and slow-Vision tests call `skipTimingSensitiveTestOnCI()`:
   they run by default on a Mac and skip when `CI=true` unless `TANDEM_TIMING_TESTS=1`.
-- Preserve the bundle IDs and stable ad-hoc signing requirement in
+- Preserve the bundle IDs (`com.itbenko.tandem`) and stable ad-hoc signing requirement in
   `build-app.sh`, so rebuilds retain macOS privacy permissions.
 - `setup_mac.sh` builds the release app. `install.sh` links the `tandem`
   launcher into `~/.local/bin`, or an explicit directory. Rerun it after
   moving the clone. Existing source edits do not require reinstalling the link.
+- Crash reports are off unless the app is built with `TANDEM_SENTRY_DSN`.
+  Never hardcode a DSN in source.
 - Optional provider keys belong in macOS Keychain, as described in
   `docs/ASSETS.md`. The app does not load `.env` files.
 
@@ -57,7 +59,7 @@ this repo root. It requires macOS 15 or newer and Xcode 26 or newer with Swift 6
   `cd sdk && bun run typecheck`.
 - `skills/tandem/SKILL.md` is the short skill that teaches agents to edit
   with Tandem; it points at `docs/AGENTS.md`. Keep its rules and the
-  commands it names current too. On Mike's Mac it's linked into
+  commands it names current too. `install.sh` links it into
   `~/.agents/skills` (Codex) and `~/.claude/skills` (Claude Code).
 - The asset library records licences and credits. Preserve that metadata
   through imports, project use and archives.

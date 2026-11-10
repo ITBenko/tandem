@@ -177,7 +177,7 @@ public final class ProjectJournal: @unchecked Sendable {
     public var url: URL { folder.url.appendingPathComponent(fileName) }
     private let folder: FolderAnchor
     private let fileName: String
-    private let queue = DispatchQueue(label: "com.mikerosoft.tandem.journal")
+    private let queue = DispatchQueue(label: "com.itbenko.tandem.journal")
 
     public init(url: URL) {
         folder = FolderAnchor(url.deletingLastPathComponent())

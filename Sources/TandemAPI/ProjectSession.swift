@@ -49,7 +49,7 @@ public final class ProjectSession: @unchecked Sendable {
 
     private let journal: ProjectJournal
     private let lockHandle: LockHandle
-    private let queue = DispatchQueue(label: "com.mikerosoft.tandem.session")
+    private let queue = DispatchQueue(label: "com.itbenko.tandem.session")
     private var autosaveWork: DispatchWorkItem?
     private var observerToken: UUID?
     private var closed = false

@@ -10,28 +10,17 @@ macOS
 
 ## What it is
 
-This is the video editor I'm building for my Convex videos to replace Filmora. It's built so my agents can edit the same project as me, through a CLI and an MCP server, while I work in the app.
+My fork of [Mike Cann's Tandem](https://github.com/mikecann/tandem), a native
+macOS video editor built so AI agents can edit the same project as me, through
+a CLI and an MCP server, while I work in the app.
 
-A project is just a `.tandem` JSON file in the video's folder. Tandem finds the media there, pairs up my Record It camera and screen takes, and does transcripts, waveforms and the cutout in the background.
+A project is just a `.tandem` JSON file in the video's folder. Tandem finds the
+media there, pairs up camera and screen takes, and does transcripts, waveforms
+and the cutout in the background.
 
-![Tandem editing the decision-models video](docs/header.jpg)
+![Tandem editing a video](docs/header.jpg)
 
 ## Get it
-
-Paste this into your AI coding agent (Claude Code, Codex, Cursor...):
-
-> Fork https://github.com/mikecann/tandem to my GitHub account and clone my fork
-> (if I don't use GitHub, or want to keep my copy private, just clone it instead),
-> then make it my own. It's one of Mike Cann's personal tools, so read the README
-> first, change anything specific to his setup to suit mine, then help me get it
-> running.
-
-Heads up, I'm not taking issues or pull requests on this one, so only I can open
-them. It's built around my setup and I don't want to be the one deciding what goes
-in, or accidentally breaking your version when I change something. Fork it and have
-your agent make it your own instead.
-
-### Or set it up by hand
 
 You'll need macOS 15 or newer and Xcode 26 or newer with Swift 6. Some analysis
 features, such as SpeechAnalyzer transcription (the stand-in when Bark can't),
@@ -42,7 +31,7 @@ progress. Install ffmpeg if you want to
 import formats macOS can't decode, such as WebM (`brew install ffmpeg`).
 
 ```bash
-git clone https://github.com/mikecann/tandem.git
+git clone https://github.com/ITBenko/tandem.git
 cd tandem
 bash setup_mac.sh
 bash install.sh
@@ -65,10 +54,14 @@ Tandem doesn't read `.env` files or need API keys to edit local media.
 Optional asset providers use macOS Keychain. `tandem assets providers` tells
 you what's missing, and [the asset guide](docs/ASSETS.md) covers setup.
 
-The release app in `~/Applications` (or `/Applications`) and the `tandem`
-command inside it send anonymous crash reports to Sentry: stack traces and
-the Mac's model and macOS version, nothing from your projects or media.
-Debug builds, tests, CI and copies anywhere else send nothing.
+Crash reporting is off in this fork. To turn it on, build with
+`TANDEM_SENTRY_DSN` set to your own Sentry project's DSN. Then the release
+app in `~/Applications` (or `/Applications`) and the `tandem` command inside
+it send anonymous crash reports there: stack traces and the Mac's model and
+macOS version, nothing from projects or media. Debug builds, tests, CI and
+copies anywhere else never send anything. Set `TANDEM_SENTRY_ORG` (and
+optionally `TANDEM_SENTRY_PROJECT`) with `sentry-cli` installed to upload
+debug symbols too.
 
 ## Using it
 
@@ -91,8 +84,8 @@ claude mcp add tandem -- ~/Applications/Tandem.app/Contents/MacOS/tandem mcp
 
 Old Filmora projects import with `tandem import filmora "Video v3.wfp"`.
 Agent EDLs import with `tandem import edl edit.json --recipe decision-models`.
-That recipe has paths and settings for my Decision Models video, so change
-it for your footage or add your own. The [agent guide](docs/AGENTS.md) is
+That built-in recipe is Mike's, with paths and settings for his Decision
+Models video, so pass your own recipe JSON for your footage. The [agent guide](docs/AGENTS.md) is
 the entry point for agents; its topic files in `docs/agents/` have the
 recipes, import options and troubleshooting.
 
@@ -143,9 +136,11 @@ test, which may install a language model and needs macOS 26.
 | `Sources/TandemCrashReports` | Crash reports from the installed release app |
 | `tests/` | XCTest targets, one per library |
 
-## More tools
+## Upstream
 
-You can find my other tools at [mikerosoft.app](https://mikerosoft.app).
+This is a fork of [mikecann/tandem](https://github.com/mikecann/tandem). Mike
+doesn't take issues or pull requests there; the `upstream` remote is set up
+so I can pull his changes in with `git fetch upstream && git merge upstream/main`.
 
 MIT licensed. See [LICENSE](LICENSE). Bundled fonts and other third-party
 assets retain their own licences, which ship alongside them.

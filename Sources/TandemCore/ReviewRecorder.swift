@@ -11,7 +11,7 @@ import Foundation
 /// observers hear the new log there. Reading `log` waits for the edits
 /// already heard, so a status read straight after an edit sees it.
 public final class ReviewRecorder: @unchecked Sendable {
-    private let queue = DispatchQueue(label: "com.mikerosoft.tandem.review")
+    private let queue = DispatchQueue(label: "com.itbenko.tandem.review")
     private let coordinator: ProjectCoordinator
     private let folder: FolderAnchor?
     private let fileName: String
